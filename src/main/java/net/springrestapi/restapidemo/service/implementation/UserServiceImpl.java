@@ -6,25 +6,25 @@ import net.springrestapi.restapidemo.entity.User;
 import net.springrestapi.restapidemo.mapper.UserMapper;
 import net.springrestapi.restapidemo.repository.UserRepository;
 import net.springrestapi.restapidemo.service.UserService;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
 @Service
+@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
 
+    private ModelMapper modelMapper;
+
     @Override
     public UserDto createUser(UserDto userDto) {
-
-        User user = UserMapper.mapToUser(userDto);
-
+        User user = modelMapper.map(userDto, User.class);
         User savedUser = userRepository.save(user);
-
-        return UserMapper.mapToUserDto(savedUser);
+        return modelMapper.map(savedUser, UserDto.class);
     }
 
     @Override
@@ -38,14 +38,14 @@ public class UserServiceImpl implements UserService {
         existingUser.setEmail(updatedUser.getEmail());
         existingUser.setFirstName(updatedUser.getFirstName());
         existingUser.setLastName(updatedUser.getLastName());
-        userRepository.save(existingUser);
-        return UserMapper.mapToUserDto(existingUser);
+        User savedUser = userRepository.save(existingUser);
+        return modelMapper.map(savedUser, UserDto.class);
     }
 
     @Override
     public UserDto getUserById(Long id) {
         User user = userRepository.findById(id).get();
-        return UserMapper.mapToUserDto(user);
+        return modelMapper.map(user, UserDto.class);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
         return userRepository
                 .findAll()
                 .stream()
-                .map(UserMapper::mapToUserDto)
+                .map(user -> modelMapper.map(user, UserDto.class))
                 .collect(Collectors.toList());
     }
 }
