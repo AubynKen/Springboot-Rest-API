@@ -3,6 +3,7 @@ package net.springrestapi.restapidemo.service.implementation;
 import lombok.AllArgsConstructor;
 import net.springrestapi.restapidemo.dto.UserDto;
 import net.springrestapi.restapidemo.entity.User;
+import net.springrestapi.restapidemo.exception.ResourceNotFoundException;
 import net.springrestapi.restapidemo.mapper.UserMapper;
 import net.springrestapi.restapidemo.repository.UserRepository;
 import net.springrestapi.restapidemo.service.UserService;
@@ -44,7 +45,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUserById(Long id) {
-        User user = userRepository.findById(id).get();
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("User", "id", id)
+        );
         return modelMapper.map(user, UserDto.class);
     }
 

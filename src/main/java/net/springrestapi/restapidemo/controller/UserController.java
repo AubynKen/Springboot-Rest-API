@@ -2,11 +2,15 @@ package net.springrestapi.restapidemo.controller;
 
 import lombok.AllArgsConstructor;
 import net.springrestapi.restapidemo.dto.UserDto;
+import net.springrestapi.restapidemo.exception.ErrorDetails;
+import net.springrestapi.restapidemo.exception.ResourceNotFoundException;
 import net.springrestapi.restapidemo.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @AllArgsConstructor
