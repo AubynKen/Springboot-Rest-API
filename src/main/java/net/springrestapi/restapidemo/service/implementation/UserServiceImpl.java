@@ -3,6 +3,7 @@ package net.springrestapi.restapidemo.service.implementation;
 import lombok.AllArgsConstructor;
 import net.springrestapi.restapidemo.dto.UserDto;
 import net.springrestapi.restapidemo.entity.User;
+import net.springrestapi.restapidemo.exception.EmailAlreadyExistsException;
 import net.springrestapi.restapidemo.exception.ResourceNotFoundException;
 import net.springrestapi.restapidemo.mapper.UserMapper;
 import net.springrestapi.restapidemo.repository.UserRepository;
@@ -11,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,6 +25,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
+        Optional<User> userWithSameEmail = userRepository.findUserByEmail(userDto.getEmail());
+        if (userWithSameEmail.isPresent()) {
+            throw new EmailAlreadyExistsException("User with the same email already exists.");
+        }
+
         User user = modelMapper.map(userDto, User.class);
         User savedUser = userRepository.save(user);
         return modelMapper.map(savedUser, UserDto.class);
